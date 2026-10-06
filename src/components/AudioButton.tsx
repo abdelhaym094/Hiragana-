@@ -20,14 +20,22 @@ export const AudioButton: React.FC<AudioButtonProps> = ({
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const isMountedRef = React.useRef(true);
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isPlaying) return;
-
     setIsPlaying(true);
     sfx.click(enabled);
     speakJapanese(text, enabled).finally(() => {
-      setIsPlaying(false);
+      if (isMountedRef.current) {
+        setIsPlaying(false);
+      }
     });
   };
 

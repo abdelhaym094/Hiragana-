@@ -20,58 +20,16 @@ function getAudioContext(): AudioContext | null {
   return audioCtx;
 }
 
-// Japanese Voice Cache
-let japaneseVoice: SpeechSynthesisVoice | null = null;
-let voicesLoaded = false;
-
-function loadVoices(): void {
-  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-  const voices = window.speechSynthesis.getVoices();
-  japaneseVoice = voices.find(v => v.lang.toLowerCase().startsWith('ja') || v.lang.toLowerCase().includes('jp')) || null;
-  voicesLoaded = true;
-}
-
-if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = () => {
-    loadVoices();
-  };
-  loadVoices();
-}
-
-/**
- * Pronounce Japanese text using SpeechSynthesis
- */
-export function speakJapanese(text: string, enabled = true): Promise<void> {
-  return new Promise((resolve) => {
-    if (!enabled || typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      resolve();
-      return;
-    }
-
-    try {
-      window.speechSynthesis.cancel(); // Stop any pending speech
-
-      if (!voicesLoaded) {
-        loadVoices();
-      }
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'ja-JP';
-      if (japaneseVoice) {
-        utterance.voice = japaneseVoice;
-      }
-      utterance.rate = 0.85; // Slightly slower for crisp beginner recognition
-      utterance.pitch = 1.05;
-
-      utterance.onend = () => resolve();
-      utterance.onerror = () => resolve();
-
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      resolve();
-    }
-  });
-}
+// Re-export centralized Japanese Audio Service for backwards compatibility
+export {
+  speakJapanese,
+  stopJapaneseAudio,
+  getJapaneseVoice,
+  getAllVoices,
+  isSpeechSynthesisSupported,
+  HIRAGANA_PRONUNCIATION_WORD_MAP
+} from './japaneseAudio';
+export type { JapaneseSpeechOptions } from './japaneseAudio';
 
 /**
  * Web Audio API Sound Effects

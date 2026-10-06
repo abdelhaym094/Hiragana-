@@ -29,13 +29,22 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
   const memoryLvl = mastery?.memoryStrength || 0;
   const [isPlayingWord, setIsPlayingWord] = useState(false);
 
+  const isMountedRef = React.useRef(true);
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const handlePlayWord = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isPlayingWord) return;
     setIsPlayingWord(true);
     sfx.click(soundEnabled);
     speakJapanese(word.jp, speechEnabled).finally(() => {
-      setIsPlayingWord(false);
+      if (isMountedRef.current) {
+        setIsPlayingWord(false);
+      }
     });
   };
 

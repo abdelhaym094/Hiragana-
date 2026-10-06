@@ -42,13 +42,23 @@ export const SoundToCharGame: React.FC<SoundToCharGameProps> = ({
   const [showLearningReview, setShowLearningReview] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   // Play audio on new character
   useEffect(() => {
     if (currentCharacter && speechEnabled && !isFinished && !showLearningReview) {
       setIsPlayingAudio(true);
       const timer = setTimeout(() => {
         speakJapanese(currentCharacter.char, speechEnabled).finally(() => {
-          setIsPlayingAudio(false);
+          if (isMountedRef.current) {
+            setIsPlayingAudio(false);
+          }
         });
       }, 250);
       return () => clearTimeout(timer);
@@ -69,7 +79,9 @@ export const SoundToCharGame: React.FC<SoundToCharGameProps> = ({
       setIsPlayingAudio(true);
       sfx.click(soundEnabled);
       speakJapanese(currentCharacter.char, speechEnabled).finally(() => {
-        setIsPlayingAudio(false);
+        if (isMountedRef.current) {
+          setIsPlayingAudio(false);
+        }
       });
     }
   };
