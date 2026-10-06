@@ -1,0 +1,6 @@
+{
+  "name": "Hiragana Quest",
+  "description": "Master all 46 basic Hiragana characters in 7 days — 10 minutes a day with bite-sized lessons, interactive mini-games, audio pronunciation, and daily bosses.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-japanese: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --bg-base: #080A0D;
+    --surface-1: #11151A;
+    --surface-2: #171C22;
+    --surface-3: #1D232B;
+    --border-color: #282F38;
+    --accent-primary: #FF5C7A;
+    --accent-secondary: #FFD166;
+    --accent-success: #42E6A4;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #080A0D;
+    color: #F5F7FA;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    overscroll-behavior-y: none;
+  }
+}
+
+.font-japanese {
+  font-family: var(--font-japanese);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle Japanese Torii / Hanko Stamp styling */
+.hanko-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #FF5C7A;
+  color: #FF5C7A;
+  border-radius: 6px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  background: rgba(255, 92, 122, 0.08);
+}
+
+/* Tactile game button 3D push feel */
+.btn-game-primary {
+  background: #FF5C7A;
+  color: #080A0D;
+  border-bottom: 4px solid #D83B59;
+  transition: all 0.12s ease;
+}
+.btn-game-primary:hover {
+  background: #FF6E89;
+}
+.btn-game-primary:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.btn-game-secondary {
+  background: #171C22;
+  color: #F5F7FA;
+  border: 1px solid #282F38;
+  border-bottom: 4px solid #11151A;
+  transition: all 0.12s ease;
+}
+.btn-game-secondary:hover {
+  background: #1D232B;
+  border-color: #384250;
+}
+.btn-game-secondary:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.btn-game-gold {
+  background: #FFD166;
+  color: #080A0D;
+  border-bottom: 4px solid #D9A932;
+  transition: all 0.12s ease;
+}
+.btn-game-gold:hover {
+  background: #FFDC85;
+}
+.btn-game-gold:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+@keyframes gentleShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: gentleShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes floatUpFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -12px) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -45px) scale(0.95);
+  }
+}
+
+.animate-float-xp {
+  animation: floatUpFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 92, 122, 0.25), 0 0 30px rgba(255, 92, 122, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 92, 122, 0.5), 0 0 50px rgba(255, 92, 122, 0.2);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes cardGleam {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(200%) rotate(25deg); }
+}
+
+.animate-card-gleam {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%
+  );
+  animation: cardGleam 4s infinite linear;
+  pointer-events: none;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #171C22;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #282F38;
+}
