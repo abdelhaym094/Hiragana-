@@ -57,6 +57,9 @@ export function getYesterdayDateString(): string {
  */
 function migrateCharacters(rawCharacters: Record<string, any>): Record<string, CharacterMemory> {
   const migrated: Record<string, CharacterMemory> = {};
+  if (!rawCharacters || typeof rawCharacters !== 'object') {
+    return migrated;
+  }
   const romajiMap = new Map<string, string>();
   for (const item of HIRAGANA_DATA) {
     romajiMap.set(item.char, item.romaji);
@@ -64,7 +67,8 @@ function migrateCharacters(rawCharacters: Record<string, any>): Record<string, C
 
   const now = Date.now();
 
-  for (const [char, oldData] of Object.entries(rawCharacters || {})) {
+  for (const [char, oldData] of Object.entries(rawCharacters)) {
+    if (!oldData || typeof oldData !== 'object') continue;
     const romaji = romajiMap.get(char) || oldData.romaji || '';
     const base = initCharacterMemory(char, romaji);
 
@@ -133,7 +137,10 @@ export function loadProgress(): UserProgress {
   if (typeof window === 'undefined') return DEFAULT_PROGRESS;
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      raw = localStorage.getItem('hiragana_quest_progress');
+    }
     if (!raw) return DEFAULT_PROGRESS;
     const parsed = JSON.parse(raw) as Partial<UserProgress>;
 

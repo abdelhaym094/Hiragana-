@@ -304,11 +304,17 @@ export const BossGame: React.FC<BossGameProps> = ({
               Characters to Watch:
             </span>
             <div className="flex flex-wrap gap-2">
-              {weakCharacters.slice(0, 4).map(w => (
-                <span key={w.character.char} className="text-xs px-2.5 py-1 rounded-lg bg-[#14171C] border border-[#1B2027] font-japanese font-bold text-[#F7F7F5]">
-                  {w.character.char} ({w.character.romaji}) · {w.mastery.accuracy}%
-                </span>
-              ))}
+              {weakCharacters.slice(0, 4).map((w, idx) => {
+                const charObj = (w as any)?.character || w;
+                if (!charObj || !charObj.char) return null;
+                const mastery = (w as any)?.mastery || masteryMap?.[charObj.char] || {};
+                const accuracy = mastery?.accuracy ?? 100;
+                return (
+                  <span key={charObj.char || idx} className="text-xs px-2.5 py-1 rounded-lg bg-[#14171C] border border-[#1B2027] font-japanese font-bold text-[#F7F7F5]">
+                    {charObj.char} ({charObj.romaji}) · {accuracy}%
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}

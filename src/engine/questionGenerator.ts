@@ -345,13 +345,20 @@ export function generateCognitiveQuestion(
 
     case 'discrimination': {
       // 9. Confusion Pair: Which one is ね? [ね / れ]
-      const antagonistChar = (memory ? getTopConfusionPair(memory)?.confusingChar : null) 
-        || getVisualConfusionCandidates(targetChar.char)[0] 
+      const topConfusion = memory ? getTopConfusionPair(memory)?.confusingChar : null;
+      const visualCandidates = getVisualConfusionCandidates(targetChar.char);
+      const antagonistChar = topConfusion 
+        || visualCandidates.find(c => c !== targetChar.char)
         || (targetChar.char === 'れ' ? 'ね' : 'れ');
 
-      const antagonistObj = pool.find(c => c.char === antagonistChar) 
+      let antagonistObj = pool.find(c => c.char === antagonistChar) 
         || HIRAGANA_DATA.find(c => c.char === antagonistChar) 
-        || pool.filter(c => c.char !== targetChar.char)[0];
+        || pool.find(c => c.char !== targetChar.char)
+        || HIRAGANA_DATA.find(c => c.char !== targetChar.char);
+
+      if (!antagonistObj || antagonistObj.char === targetChar.char) {
+        antagonistObj = HIRAGANA_DATA.find(c => c.char !== targetChar.char)!;
+      }
 
       const choices = [targetChar, antagonistObj].sort(() => Math.random() - 0.5);
 
@@ -360,16 +367,16 @@ export function generateCognitiveQuestion(
         character: targetChar,
         type,
         difficulty: 'hard',
-        confusionAntagonist: antagonistChar,
+        confusionAntagonist: antagonistObj.char,
         promptKicker: 'Discrimination Duel',
         promptMain: `Which one is "${targetChar.char}" (${targetChar.romaji.toUpperCase()})?`,
-        promptSub: `Notice the stroke details! Distinguish ${targetChar.char} from ${antagonistChar}.`,
+        promptSub: `Notice the stroke details! Distinguish ${targetChar.char} from ${antagonistObj.char}.`,
         correctValue: targetChar.char,
-        explanation: `${targetChar.char} is "${targetChar.romaji}". Notice the difference from ${antagonistChar}!`,
+        explanation: `${targetChar.char} is "${targetChar.romaji}". Notice the difference from ${antagonistObj.char}!`,
         options: choices.map(c => ({
           label: c.char,
           value: c.char,
-          subLabel: c.char === targetChar.char ? 'Target' : 'Antagonist',
+          subLabel: c.romaji.toUpperCase(),
           isJapanese: true
         }))
       };

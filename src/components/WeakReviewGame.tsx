@@ -54,7 +54,7 @@ export const WeakReviewGame: React.FC<WeakReviewGameProps> = ({
   const [inspectingChar, setInspectingChar] = useState<HiraganaCharacter | null>(null);
 
   const drillPool = weakList.length >= 2 
-    ? weakList.map(w => w.character)
+    ? weakList.map(w => (w as any).character || w)
     : allUnlocked;
 
   // Active Adaptive Cognitive Drill
@@ -198,13 +198,20 @@ export const WeakReviewGame: React.FC<WeakReviewGameProps> = ({
           </div>
 
           <div className="space-y-2.5">
-            {weakList.map(({ character, mastery, isRecognitionWeak, isMemoryWeak, primaryWeakness }) => {
-              const memScore = mastery.memoryStrength || 0;
+            {weakList.map((item, idx) => {
+              const character = (item as any)?.character || item;
+              if (!character || !character.char) return null;
+              const mastery = (item as any)?.mastery || masteryMap?.[character.char] || {};
+              const isRecognitionWeak = (item as any)?.isRecognitionWeak;
+              const isMemoryWeak = (item as any)?.isMemoryWeak;
+              const primaryWeakness = (item as any)?.primaryWeakness;
+              const memScore = mastery?.memoryStrength ?? (mastery?.visualMemoryStrength ? Math.round(mastery.visualMemoryStrength / 20) : 0);
               const memPct = Math.round((memScore / 5) * 100);
+              const accuracy = mastery?.accuracy ?? 100;
 
               return (
                 <div
-                  key={character.char}
+                  key={character.char || idx}
                   onClick={() => setInspectingChar(character)}
                   className="p-3.5 rounded-2xl bg-[#14171C] hover:bg-[#1B2027] border border-[#1B2027] hover:border-[#FF5C7A]/50 flex items-center justify-between shadow-sm cursor-pointer transition-all group"
                 >
@@ -219,10 +226,10 @@ export const WeakReviewGame: React.FC<WeakReviewGameProps> = ({
                         </span>
                         <span className="text-xs text-[#9AA1AA]">·</span>
                         <span className="text-xs font-japanese font-semibold text-[#F7F7F5]">
-                          {character.word.jp}
+                          {character.word?.jp}
                         </span>
                         <span className="text-xs text-[#9AA1AA]">
-                          {character.word.conceptIcon}
+                          {character.word?.conceptIcon}
                         </span>
                       </div>
                       
@@ -234,7 +241,7 @@ export const WeakReviewGame: React.FC<WeakReviewGameProps> = ({
                           </span>
                         )}
                         <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${isRecognitionWeak ? 'bg-[#FF5C7A]/15 text-[#FF5C7A]' : 'bg-[#42E6A4]/15 text-[#42E6A4]'}`}>
-                          Recog: {mastery.accuracy}%
+                          Recog: {accuracy}%
                         </span>
                         <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${isMemoryWeak ? 'bg-[#FFD166]/15 text-[#FFD166]' : 'bg-[#42E6A4]/15 text-[#42E6A4]'}`}>
                           Memory: {memPct}%
